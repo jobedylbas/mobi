@@ -1,0 +1,27 @@
+
+.btn:enabled{
+	box-shadow: none;
+}
+
+.oi-cloud{
+	margin-top: -50rem;
+}
+
+.btn {
+	line-height: 1.3rem;
+}
+
+.navbar-brand{
+	padding-top: 0.75rem;
+	padding-bottom: 0.75rem;
+	font-size: 1.5rem;
+}
+
+.oi-cloud {
+	padding-top: -10%;
+	font-size: 1rem;
+}
+
+#sidebar a:hover {
+	text-decoration: none;
+}

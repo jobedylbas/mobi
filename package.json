@@ -1,0 +1,24 @@
+{
+  "name": "mobi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "jobe",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "consign": "^0.1.6",
+    "ejs": "^2.5.7",
+    "express": "^4.15.5",
+    "express-validator": "^4.2.1",
+    "mongo-trigger": "^0.1.5",
+    "mongodb": "^2.2.33",
+    "npm-start-command": "^0.2.0",
+    "socket.io": "^2.0.4",
+    "socket.io-stream": "^0.9.1",
+    "socketio": "^1.0.0"
+  }
+}

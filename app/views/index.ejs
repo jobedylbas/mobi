@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html ng-app lang="pt-br">
+	<head>
+		<% include head.ejs %>
+	</head>
+	<body>
+		<header>
+			<% include header.ejs %>
+		</header>
+		<div class="container-fluid">
+			<div class="row">
+				<aside class="col-md-2 d-none d-md-block bg-light sidebar border-left pl-0" id="sidebar">
+
+				</aside>
+				<main class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4" role="main">
+					<% include controllers.ejs %>
+					<div id="plots" class="row-flex mt-3">
+					</div>
+				</main>
+			</div>
+		</div>
+
+	</body>
+</html>

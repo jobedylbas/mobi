@@ -1,0 +1,27 @@
+"Dstat 0.7.3 CSV output"
+"Author:","Dag Wieers <dag@wieers.com>",,,,"URL:","http://dag.wieers.com/home-made/dstat/"
+"Host:","PC01HOME",,,,"User:","jobedylbas"
+"Cmdline:","dstat -json",,,,"Date:","09 Mar 2018 17:05:07 -03"
+"swap",
+"used","free"
+0,1074786304
+0,1074786304
+0,1074786304
+0,1074786304
+0,1074786304
+0,1074786304
+
+
+"Host:","PC01HOME",,,,"User:","jobedylbas"
+"Cmdline:","dstat -json",,,,"Date:","09 Mar 2018 17:07:40 -03"
+"swap",
+"used","free"
+0,1074786304
+0,1074786304
+
+
+"Host:","PC01HOME",,,,"User:","jobedylbas"
+"Cmdline:","dstat -json",,,,"Date:","24 Mar 2018 14:42:54 -03"
+"swap",
+"used","free"
+0,1074786304

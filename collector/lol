@@ -1,0 +1,8 @@
+"Dstat 0.7.3 CSV output"
+"Author:","Dag Wieers <dag@wieers.com>",,,,"URL:","http://dag.wieers.com/home-made/dstat/"
+"Host:","PC01HOME",,,,"User:","jobedylbas"
+"Cmdline:","dstat --output lol",,,,"Date:","09 Mar 2018 17:15:00 -03"
+"total cpu usage",,,,,"dsk/total",,"net/total",,"paging",,"system",
+"usr","sys","idl","wai","stl","read","writ","recv","send","in","out","int","csw"
+8.147,1.077,87.491,3.285,0,399315.736,200938.834,0,0,0,0,676.230,2779.682
+1.250,0.250,98.500,0,0,0,0,158,0,0,0,204,514
