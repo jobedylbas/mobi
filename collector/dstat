@@ -15,7 +15,8 @@
 ### Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 ### Copyright 2004-2016 Dag Wieers <dag@wieers.com>
-
+### Best way to use 
+### ./dstat -a 
 from __future__ import generators
 
 try:
@@ -159,6 +160,7 @@ class Options:
         self.output = False
         self.pidfile = False
         self.profile = ''
+        self.show = True
         
 
         ### List of available plugins
@@ -185,12 +187,14 @@ class Options:
                 ['all', 'all-plugins', 'bits', 'bw', 'black-on-white', 'color','debug', 
                  'elastic=', 'filesystem', 'float', 'full', 'help', 'integer', 'json',
                  'list', 'mods', 'modules','mongo=' ,'nocolor', 'noheaders', 'noupdate',
-                 'output=', 'pidfile=', 'profile', 'version', 'vmstat'] + allplugins)
+                 'output=', 'pidfile=', 'profile', 'version', 'vmstat', 'show-false'] + allplugins)
         except getopt.error, exc:
             print 'dstat: %s, try dstat -h for a list of all the options' % str(exc)
             sys.exit(1)
 
         for opt, arg in opts:
+            if opt in ['--show-false']:
+                self.show = False
             if opt in ['-c']:
                 self.plugins.append('cpu')
             elif opt in ['-C']:
@@ -233,7 +237,7 @@ class Options:
             elif opt in ['-y']:
                 self.plugins.append('sys')
             elif opt in ['-a', '--all']:
-                self.plugins += [ 'cpu', 'disk', 'net', 'page', 'sys' ]
+                self.plugins += [ 'cpu', 'disk', 'net', 'page', 'sys', 'mem', 'epoch']
             elif opt in ['-v', '--vmstat']:
                 self.plugins += [ 'proc', 'mem', 'page', 'disk', 'sys', 'cpu' ]
             elif opt in ['-f', '--full']:
@@ -267,13 +271,20 @@ class Options:
                 self.update = False
             elif opt in ['-o', '--output']:
                 self.output = arg
+                if 'epoch' not in self.plugins:
+                    self.plugins.append('epoch')
             elif opt in ['-j']:
                 self.json = True
+                if 'epoch' not in self.plugins:
+                    self.plugins.append('epoch')
             elif opt in ['--elastic']:
                 self.elastic = arg
-                print arg
+                if 'epoch' not in self.plugins:
+                    self.plugins.append('epoch')
             elif opt in ['--mongo']:
                 self.mongo = arg
+                if 'epoch' not in self.plugins:
+                    self.plugins.append('epoch')
             elif opt in ['--pidfile']:
                 self.pidfile = arg
             elif opt in ['--profile']:
@@ -2956,20 +2967,20 @@ def perform(update):
                 if (op.json or op.mongo or op.elastic):    
                     lineList = lineList+o.dataList() # List with the data stats
         ### Print stats
-        sys.stdout.write(line + theme['input'])
-        
-        if op.output and step == op.delay:
-            outputfile.write(oline + '\n')
-            # outputfile.flush()
+        if op.show:
+            sys.stdout.write(line + theme['input'])
         
         # transform stats in an json file 
-        if op.mongo and step == op.delay:
+        if step == op.delay:
+            if op.mongo:
             #print(dataTypeList)
-            data = parse(dataDict, dataTypeList, lineList)
-            collection.insert_one(json.loads(json.dumps(data, cls=UUIDEncoder)))
+                data = parse(dataDict, dataTypeList, lineList)
+                collection.insert_one(json.loads(json.dumps(data, cls=UUIDEncoder)))
             #finaltime = time.time() - starttime
             #collection.insert_one({'teste':1})
             # make the json object
+            if op.output:
+                outputfile.write(oline+'\n')
         #print(str(round(finaltime,5)));
        
         ### Print debugging output
