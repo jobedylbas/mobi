@@ -20,12 +20,13 @@
 from __future__ import generators
 
 try:
-    import sys, os, time, sched, re, getopt, fnmatch
+    import sys, os, time, sched, re, getopt, fnmatch, pip
     import types, resource, getpass, glob, linecache
     import json, pprint, socket, subprocess, datetime
     from collections import OrderedDict
     from pymongo import * # To use mongo DB
     from uuid import * # To create unique ids 
+
 except KeyboardInterrupt:
     pass
 
@@ -161,13 +162,14 @@ class Options:
         self.pidfile = False
         self.profile = ''
         self.show = True
+        self.socket = False
         
 
         ### List of available plugins
         allplugins = listplugins()
 
         ### List of plugins to show
-        self.plugins = []
+        self.plugins = ['epoch']
 
         ### Implicit if no terminal is used
         if not sys.stdout.isatty():
@@ -187,13 +189,12 @@ class Options:
                 ['all', 'all-plugins', 'bits', 'bw', 'black-on-white', 'color','debug', 
                  'elastic=', 'filesystem', 'float', 'full', 'help', 'integer', 'json',
                  'list', 'mods', 'modules','mongo=' ,'nocolor', 'noheaders', 'noupdate',
-                 'output=', 'pidfile=', 'profile', 'version', 'vmstat', 'show-false'] + allplugins)
+                 'output=', 'pidfile=', 'profile', 'version', 'vmstat', 'showfalse'] + allplugins)
         except getopt.error, exc:
             print 'dstat: %s, try dstat -h for a list of all the options' % str(exc)
-            sys.exit(1)
-
+            sys.exit(1)     
         for opt, arg in opts:
-            if opt in ['--show-false']:
+            if opt in ['--showfalse']:
                 self.show = False
             if opt in ['-c']:
                 self.plugins.append('cpu')
@@ -237,7 +238,7 @@ class Options:
             elif opt in ['-y']:
                 self.plugins.append('sys')
             elif opt in ['-a', '--all']:
-                self.plugins += [ 'cpu', 'disk', 'net', 'page', 'sys', 'mem', 'epoch']
+                self.plugins += [ 'cpu', 'disk', 'net', 'page', 'sys', 'mem']
             elif opt in ['-v', '--vmstat']:
                 self.plugins += [ 'proc', 'mem', 'page', 'disk', 'sys', 'cpu' ]
             elif opt in ['-f', '--full']:
@@ -271,24 +272,18 @@ class Options:
                 self.update = False
             elif opt in ['-o', '--output']:
                 self.output = arg
-                if 'epoch' not in self.plugins:
-                    self.plugins.append('epoch')
             elif opt in ['-j']:
                 self.json = True
-                if 'epoch' not in self.plugins:
-                    self.plugins.append('epoch')
             elif opt in ['--elastic']:
                 self.elastic = arg
-                if 'epoch' not in self.plugins:
-                    self.plugins.append('epoch')
             elif opt in ['--mongo']:
                 self.mongo = arg
-                if 'epoch' not in self.plugins:
-                    self.plugins.append('epoch')
             elif opt in ['--pidfile']:
                 self.pidfile = arg
             elif opt in ['--profile']:
                 self.profile = 'dstat_profile.log'
+            elif opt in ['--socket']:
+                self.socket = True
             elif opt in ['-h', '--help']:
                 self.usage()
                 self.help()
@@ -306,9 +301,9 @@ class Options:
             print 'dstat: option --float and --integer are mutual exclusive, you can only force one'
             sys.exit(1)
 
-        if not self.plugins:
+        if self.plugins[0] == 'epoch':
             print 'You did not select any stats, using -cdngy by default.'
-            self.plugins = [ 'cpu', 'disk', 'net', 'page', 'sys' ]
+            self.plugins += [ 'cpu', 'disk', 'net', 'page', 'sys' ]
 
         try:
             if len(args) > 0: self.delay = int(args[0])
@@ -409,6 +404,8 @@ Dstat options:
   --noupdate               disable intermediate updates
   --output file            write CSV output to file
   --profile                show profiling statistics when exiting dstat
+  --showfalse              don't show the stat on the screen
+  --socket                 create a socket 
 
 delay is the delay in seconds between each update (default: 1)
 count is the number of updates to display before exiting (default: unlimited)
@@ -2671,7 +2668,7 @@ def main():
 
     user = getpass.getuser()
     hostname = os.uname()[1]
-
+        
     ### Write term-title
     if sys.stdout.isatty():
         shell = os.getenv('XTERM_SHELL')
@@ -2810,6 +2807,22 @@ def main():
 
     if not totlist:
         die(8, 'None of the stats you selected are available.')
+
+    # Creating a socket
+    if op.socket:
+        try:
+            global socketio
+            socketio = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        except socket.error as err:
+            print("Socket creation failed with error %s" %err)
+        socketio.bind(('', 5000))
+        socketio.listen(5)
+        #print('socket on listenning mode')
+        noConnection = True
+        global c, addr
+        while noConnection:
+            c, addr = socketio.accept();
+            noConnection = False
 
     if op.json or op.mongo or op.elastic:
         dataDict = OrderedDict()
@@ -2981,6 +2994,11 @@ def perform(update):
             # make the json object
             if op.output:
                 outputfile.write(oline+'\n')
+            if op.socket:
+                try:
+                    c.send(line)
+                except:
+                    c.close()
         #print(str(round(finaltime,5)));
        
         ### Print debugging output
@@ -3020,6 +3038,9 @@ if __name__ == '__main__':
     except KeyboardInterrupt, e:
         if op.update:
             sys.stdout.write('\n')
+        if op.socket and 'c' in globals():
+            c.close()
+            print('connection closed.')
     exit(0)
 else:
     op = Options('')

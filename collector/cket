@@ -1,0 +1,16 @@
+"Dstat 0.7.3 CSV output"
+"Author:","Dag Wieers <dag@wieers.com>",,,,"URL:","http://dag.wieers.com/home-made/dstat/"
+"Host:","breno-desktop",,,,"User:","jobedylbas"
+"Cmdline:","dstat -socket",,,,"Date:","11 Apr 2018 15:00:48 -03"
+"epoch","swap",,"total cpu usage",,,,,"disk/total",,"net/total",,"paging",,"system",
+"epoch","used","free","usr","sys","idl","wai","stl","read","writ","recv","send","in","out","int","csw"
+1523469648.637,14733312,29983973376,6.073,1.073,88.967,3.888,0,297390.915,263587.116,0,0,10.929,3281.383,794.071,3250.166
+1523469649.638,14733312,29983973376,1.003,0.251,97.744,1.003,0,0,135168,1897,267,0,0,379,1237
+
+
+"Host:","breno-desktop",,,,"User:","jobedylbas"
+"Cmdline:","dstat -socket",,,,"Date:","11 Apr 2018 15:01:30 -03"
+"epoch","swap",,"total cpu usage",,,,,"disk/total",,"net/total",,"paging",,"system",
+"epoch","used","free","usr","sys","idl","wai","stl","read","writ","recv","send","in","out","int","csw"
+1523469690.723,14733312,29983973376,6.049,1.069,89.023,3.859,0,294678.667,261767.564,0,0,10.828,3250.958,793.313,3239.666
+1523469691.724,14733312,29983973376,1.003,0.501,98.496,0,0,0,0,1084,3455,0,0,340,1163
