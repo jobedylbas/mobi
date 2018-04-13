@@ -24,6 +24,8 @@ try:
     import types, resource, getpass, glob, linecache
     import json, pprint, socket, subprocess, datetime
     from collections import OrderedDict
+    from thread import *
+    import threading
     from pymongo import * # To use mongo DB
     from uuid import * # To create unique ids 
 
@@ -189,7 +191,7 @@ class Options:
                 ['all', 'all-plugins', 'bits', 'bw', 'black-on-white', 'color','debug', 
                  'elastic=', 'filesystem', 'float', 'full', 'help', 'integer', 'json',
                  'list', 'mods', 'modules','mongo=' ,'nocolor', 'noheaders', 'noupdate',
-                 'output=', 'pidfile=', 'profile', 'version', 'vmstat', 'showfalse'] + allplugins)
+                 'output=', 'pidfile=', 'profile', 'version', 'vmstat', 'showfalse','socketconnection'] + allplugins)
         except getopt.error, exc:
             print 'dstat: %s, try dstat -h for a list of all the options' % str(exc)
             sys.exit(1)     
@@ -282,7 +284,7 @@ class Options:
                 self.pidfile = arg
             elif opt in ['--profile']:
                 self.profile = 'dstat_profile.log'
-            elif opt in ['--socket']:
+            elif opt in ['--socketconnection']:
                 self.socket = True
             elif opt in ['-h', '--help']:
                 self.usage()
@@ -405,7 +407,7 @@ Dstat options:
   --output file            write CSV output to file
   --profile                show profiling statistics when exiting dstat
   --showfalse              don't show the stat on the screen
-  --socket                 create a socket 
+  --socketconnection       create a socket 
 
 delay is the delay in seconds between each update (default: 1)
 count is the number of updates to display before exiting (default: unlimited)
@@ -2649,6 +2651,35 @@ def exit(ret):
 
     sys.exit(ret)
 
+# Server in a thread
+def threadServer(socketio):
+    while True:
+        # Check connection stablished
+        try:
+            c, addr = socketio.accept()
+            client = [c, addr]
+            print 'conectou'
+        except:
+            pass
+        
+        # Check data received;
+        try: 
+            data, addrFrom = socketio.recvfrom(4096)
+            for client in clients:
+                if addrFrom in client:
+                    #client.append(data)
+                    print data
+        except:
+            pass
+
+        # Check the new connection is valid    
+        if client not in clients:
+            clients.append(client)
+            print clients
+
+    socketio.close()
+
+
 def main():
     "Initialization of the program, terminal, internal structures"
     global cpunr, hz, maxint, ownpid, pagesize
@@ -2657,7 +2688,10 @@ def main():
     global update, missed
     global mongoDB, collection
     global elasticDB, index
-    global dataDict 
+    global dataDict
+    global clients, addresses
+    clients = []
+    addresses = []
     
     cpunr = getcpunr()
     hz = os.sysconf('SC_CLK_TCK')
@@ -2818,11 +2852,14 @@ def main():
         socketio.bind(('', 5000))
         socketio.listen(5)
         #print('socket on listenning mode')
-        noConnection = True
         global c, addr
-        while noConnection:
-            c, addr = socketio.accept();
-            noConnection = False
+        start_new_thread(threadServer, (socketio,))
+        #start_new_thread(threadDatarecv, (socketio,))
+        # while noConnection:
+        #     c, addr = socketio.accept();
+        #     print (c, addr)
+        #     noConnection = False
+
 
     if op.json or op.mongo or op.elastic:
         dataDict = OrderedDict()
@@ -2995,10 +3032,15 @@ def perform(update):
             if op.output:
                 outputfile.write(oline+'\n')
             if op.socket:
-                try:
-                    c.send(line)
-                except:
-                    c.close()
+                for client in clients:
+                    try:
+                        client[0].send(line)
+                    except:
+                        client[0].close()
+                # try:
+                #     c.send(line)
+                # except:
+                #     c.close()
         #print(str(round(finaltime,5)));
        
         ### Print debugging output
@@ -3038,9 +3080,11 @@ if __name__ == '__main__':
     except KeyboardInterrupt, e:
         if op.update:
             sys.stdout.write('\n')
-        if op.socket and 'c' in globals():
-            c.close()
-            print('connection closed.')
+        if op.socket and len(clients) != 0:
+            for client in clients:
+                client[0].close()
+            socketio.close()
+
     exit(0)
 else:
     op = Options('')

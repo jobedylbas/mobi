@@ -23,7 +23,7 @@ var renderSidebar = function(){
 	  			$('<div>',{ id: divId, class: 'plot'}).appendTo('#plots');
 	  			
 	  			// Create a websocket connection
-				//socket = io('http://localhost:4000');
+				socket = io('http://localhost:5000');
 				
 				var chartTypeList = [];
         		$('#chartTypeDiv .active').each(function(){
