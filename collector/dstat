@@ -103,6 +103,7 @@ def createNewMachine(dataTypeList):
     idDict["dateregister"] = str(datetime.datetime.now())
     idDict["datatype"] = []
     for variable in dataTypeList:
+        print(variable)
         if( variable.find("swap") != -1 or variable.find("mem") != -1 or variable.find("pagi") != -1):
             idDict["datatype"].append('memory:'+variable)
         elif(variable.find("disk") != -1 or variable.find("io") != -1):
@@ -279,7 +280,7 @@ class Options:
             elif opt in ['--elastic']:
                 self.elastic = arg
             elif opt in ['--mongo']:
-                self.mongo = arg
+                self.mongo = arg.split(',')
             elif opt in ['--pidfile']:
                 self.pidfile = arg
             elif opt in ['--profile']:
@@ -2977,7 +2978,8 @@ def perform(update):
             newline = header(totlist, vislist)
             #sys.stdout.write(newline)
         
-        if loop == 0 and (op.mongo or op.elastic or op.json):
+        if loop == 0 and ( op.mongo or op.elastic or op.json):
+            print(op.mongo)
             dataTypeList = jsonHeader(vislist)
             auxDatatypeList = []
             auxDatatypeList = (auxDatatypeList + dataTypeList)
@@ -2985,22 +2987,32 @@ def perform(update):
             #print(auxDatatypeList)
             #print(dataTypeList)
             # Get the name of the machine
-            hostname = socket.gethostname()
-            mongoClient = mongoConnection(op.mongo)
-            # Accessing the database, in our case is teste
-            mongoDB = mongoClient['test']
-            # The line below is to create a fictitious collection
-            #hostname = "Paulo"
-            # If the machine doesn't exist on the database, we create a log with it
-            # in pcs collection
-            if(mongoDB.pcs.find_one({"uniqueId": uuid3(NAMESPACE_DNS, hostname)}) == None):
-                idMachineFile = createNewMachine(auxDatatypeList)
-                mongoDB.pcs.insert_one(idMachineFile)
-                    
-            # Create a machine collection on database
-            collection = mongoDB[hostname]
-                #print(dataTypeList) 
-                #mongoDB.pcs.insert_one(vislist)
+            if op.mongo:
+                
+                hostname = socket.gethostname()
+                mongoClient = mongoConnection(op.mongo[0])
+                
+                # Accessing the database, in our case is teste
+                mongoDB = mongoClient['test']
+                print(mongoDB)
+                # The line below is to create a fictitious collection
+                #hostname = "Paulo"
+                # If the machine doesn't exist on the database, we create a log with it
+                # in pcs collection
+                if( 'pcs' in mongoDB.collection_names()):
+                    if(mongoDB.pcs.find_one({"uniqueId": uuid3(NAMESPACE_DNS, hostname)}) == None):
+                        idMachineFile = createNewMachine(auxDatatypeList)
+                        mongoDB.pcs.insert_one(idMachineFile)
+                        mongoDB.create_collection(hostname)
+                else:
+                    mongoDB.create_collection('pcs')
+                    idMachineFile = createNewMachine(auxDatatypeList)
+                    mongoDB.pcs.insert_one(idMachineFile)
+                    mongoDB.create_collection(hostname)
+                # Create a machine collection on database
+                collection = mongoDB[hostname]
+                    #print(dataTypeList) 
+                    #mongoDB.pcs.insert_one(vislist)
 
         ### Calculate all objects (visible, invisible)
         starttime = time.time()
