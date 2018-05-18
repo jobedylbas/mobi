@@ -1,27 +1,25 @@
 
-.btn:enabled{
-	box-shadow: none;
+@import url(//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css);
+
+/*** custom checkboxes ***/
+
+input[type=checkbox] { display:none; } /* to hide the checkbox itself */
+input[type=checkbox] + label:before {
+  font-family: FontAwesome;
+  display: inline-block;
 }
 
-.oi-cloud{
-	margin-top: -50rem;
+input[type=checkbox] + label:before { content: "\f096"; color: #868e96} /* unchecked icon */
+input[type=checkbox] + label:before { letter-spacing: 10px;} /* space between checkbox and label */
+
+input[type=checkbox]:checked + label:before { content: "\f14a";  color: #adb5bd;} /* checked icon */
+input[type=checkbox]:checked + label:before { letter-spacing: 9px;} /* allow space for check mark */
+
+#pcList ul {
+	color: #868e96;
 }
 
-.btn {
-	line-height: 1.3rem;
-}
-
-.navbar-brand{
-	padding-top: 0.75rem;
-	padding-bottom: 0.75rem;
-	font-size: 1.5rem;
-}
-
-.oi-cloud {
-	padding-top: -10%;
-	font-size: 1rem;
-}
-
-#sidebar a:hover {
-	text-decoration: none;
+.flex-y {
+	overflow-y: auto;
+	overflow-x: hidden;
 }

@@ -23,8 +23,10 @@ try:
     import sys, os, time, sched, re, getopt, fnmatch, pip
     import types, resource, getpass, glob, linecache
     import json, pprint, socket, subprocess, datetime
+    from elasticsearch import Elasticsearch
     from collections import OrderedDict
     from thread import *
+    import requests
     import threading
     from pymongo import * # To use mongo DB
     from uuid import * # To create unique ids 
@@ -389,8 +391,10 @@ Dstat options:
   --vm                     enable vm stats
   --vm-adv                 enable advanced vm stats
   --zones                  enable zoneinfo stats
-  --mongo                  enable mongo insertion
+  --mongo                  enable mongo
     --mongo 'server','db'                  
+  --elastic                enable elastic
+    --elastic server
 
   --list                   list all available plugins
   --<plugin-name>          enable external plugin by name (see --list)
@@ -2691,7 +2695,6 @@ def main():
     global totlist, inittime
     global update, missed
     global mongoDB, collection
-    global elasticDB, index
     global dataDict
     global clients, addresses
     clients = []
@@ -2902,6 +2905,9 @@ def perform(update):
         global loop, step, missed
         global dataTypeList
         global collection
+        global elasticDB
+        global hostname
+        elasticDB = Elasticsearch()
 
         starttime = time.time()
 
@@ -2982,7 +2988,8 @@ def perform(update):
             #sys.stdout.write(newline)
         
         if loop == 0 and ( op.mongo or op.elastic or op.json):
-            print(op.mongo)
+            #print(op.mongo)
+            hostname = socket.gethostname()
             dataTypeList = jsonHeader(vislist)
             auxDatatypeList = []
             auxDatatypeList = (auxDatatypeList + dataTypeList)
@@ -2992,7 +2999,6 @@ def perform(update):
             # Get the name of the machine
             if op.mongo:
                 
-                hostname = socket.gethostname()
                 mongoClient = mongoConnection(op.mongo[0])
                 
                 # Accessing the database, in our case is teste
@@ -3011,6 +3017,18 @@ def perform(update):
                 collection = mongoDB[hostname]
                     #print(dataTypeList) 
                     #mongoDB.pcs.insert_one(vislist)
+            if op.elastic:
+                elasticDB = Elasticsearch()
+                if not(elasticDB.indices.exists(index='pcs')):
+                    elasticDB.indices.create(index='pcs')
+
+                res = elasticDB.search(index="pcs", body={"query": {"match": 
+                                                {"uniqueId": uuid3(NAMESPACE_DNS,hostname)}}})
+                if len(res['hits']['hits']) == 0:
+                    idMachineFile = createNewMachine(auxDatatypeList)
+                    elasticDB.index(index="pcs", doc_type="machine",body=idMachineFile)
+                    elasticDB.indices.create(index=hostname)      
+
 
         ### Calculate all objects (visible, invisible)
         starttime = time.time()
@@ -3032,12 +3050,15 @@ def perform(update):
         
         # transform stats in an json file 
         if step == op.delay:
+            if op.elastic:
+                data = parse(dataDict, dataTypeList, lineList)
+                elasticDB.index(index=hostname, doc_type="data_sample", body=data)
+            
             if op.mongo:
             #print(dataTypeList)
                 data = parse(dataDict, dataTypeList, lineList)
                 collection.insert_one(json.loads(json.dumps(data, cls=UUIDEncoder)))
             #finaltime = time.time() - starttime
-            #collection.insert_one({'teste':1})
             # make the json object
             if op.output:
                 outputfile.write(oline+'\n')

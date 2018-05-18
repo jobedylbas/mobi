@@ -1,6 +1,6 @@
 // Function to render the index with the connection and data
 module.exports.index = function (application, req, res){
-  res.render("index");
+  res.render("index1");
 }
 
 // Function to render the sidebar with the metrics
@@ -22,3 +22,10 @@ module.exports.plot = function(application, req, res){
   
 }
 
+module.exports.charts = function (application, req, res){
+  res.render("charts");
+}
+
+module.exports.about = function(application, req, res){
+	res.render("about");
+}

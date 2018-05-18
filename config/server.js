@@ -9,7 +9,6 @@ var app = express();
 
 /* Setting the view engine of express as ejs*/
 app.set('view engine', 'ejs');
-
 /* Setting the stantard view folder */
 app.set('views', './app/views');
 
@@ -24,8 +23,6 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 /* Configuring expressValidator middleware */
 app.use(expressValidator());
-
-
 
 /* Autoloads of routes, models and controllers */
 consign()

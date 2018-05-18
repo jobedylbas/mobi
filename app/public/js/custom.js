@@ -2,8 +2,53 @@
 
 var granularity = 11;
 
-// Create a socket connection with the URL
+function addEvents() {
 
+
+	$('#charts').on('click', function(){
+		renderListofPC();
+	});
+
+	$('#about').on('click', function(){
+		renderAbout();
+	});
+
+
+}
+
+// Create a socket connection with the URL
+var renderListofPC = function(){
+	$.ajax({
+		url: '/sidebar',
+		method: 'get',
+		success: function(data){
+			$("#pcList").html(data);
+			renderCharts();
+		}
+	});
+}
+
+function renderCharts(){
+	$.ajax({
+		url: '/charts',
+		methord: 'get',
+		success: function(data){
+			$("#main").html('');
+			$("#main").prepend(data);
+		}
+	});
+}
+
+var renderAbout = function(){
+	$.ajax({
+		url: '/about',
+		method: 'get',
+		success: function(data){
+			$("#main").html('');
+			$("#main").html(data);
+		}
+	});
+}
 
 var renderSidebar = function(){
     $.ajax({
@@ -267,58 +312,60 @@ var createFile = function (fileName, type, data) {
 $(document).ready(function (){
 	//socket = io('http://localhost:3000');
 	
-	renderSidebar();
-	
-	// Control the granularity menu
-	$('.time').on('click', function(){
-  		$(this).siblings().removeClass('active');
-  		$(this).addClass('active');
-  		granularity = $(this).val();
-
-  		reRenderPlot();
-    });
+	//renderSidebar();
+	addEvents();
 
 
-	// To choose the file type
-	$('.multchoice-btn').on('click', function () {
-		if ($(this).hasClass('active')){
-			$(this).removeClass('active');
-		}
-		else{
-			$(this).addClass('active');	
-		}
-		reRenderPlot();
-	});
+	// // Control the granularity menu
+	// $('.time').on('click', function(){
+ //  		$(this).siblings().removeClass('active');
+ //  		$(this).addClass('active');
+ //  		granularity = $(this).val();
 
-	$('#downbtn').on('click', function(){
-		//console.log($('#downloadsheet'));
-		$("#sidebar input:checkbox:checked").each(function(){
-			downList('#downlist', this.id);
-		});
-	});
-
-	$('#export').on('click', function(){
-		if($('#jsontype').hasClass('active')){
-			$('#downlist input:checkbox:checked').each(function(){
-				download( this.id, granularity, 'json');
-			});
-		}
-		if($('#csvtype').hasClass('active')){
-			$('#downlist input:checkbox:checked').each(function(){
-				download( this.id, granularity, 'csv');
-			});
-		}
-	});
-
-	$('#chartTypeDiv').children().on('click', function(){
-		if($('#area').hasClass('active') || $('#line').hasClass('active')){
-			$('#bar').removeClass('active');
-			reRenderPlot();
-		}
-	});
+ //  		reRenderPlot();
+ //    });
 
 
+	// // To choose the file type
+	// $('.multchoice-btn').on('click', function () {
+	// 	if ($(this).hasClass('active')){
+	// 		$(this).removeClass('active');
+	// 	}
+	// 	else{
+	// 		$(this).addClass('active');	
+	// 	}
+	// 	reRenderPlot();
+	// });
 
-	setInterval(reRenderPlot, 1000);
+	// $('#downbtn').on('click', function(){
+	// 	//console.log($('#downloadsheet'));
+	// 	$("#sidebar input:checkbox:checked").each(function(){
+	// 		downList('#downlist', this.id);
+	// 	});
+	// });
+
+	// $('#export').on('click', function(){
+	// 	if($('#jsontype').hasClass('active')){
+	// 		$('#downlist input:checkbox:checked').each(function(){
+	// 			download( this.id, granularity, 'json');
+	// 		});
+	// 	}
+	// 	if($('#csvtype').hasClass('active')){
+	// 		$('#downlist input:checkbox:checked').each(function(){
+	// 			download( this.id, granularity, 'csv');
+	// 		});
+	// 	}
+	// });
+
+	// $('#chartTypeDiv').children().on('click', function(){
+	// 	if($('#area').hasClass('active') || $('#line').hasClass('active')){
+	// 		$('#bar').removeClass('active');
+	// 		reRenderPlot();
+	// 	}
+	// });
+
+
+
+	// setInterval(reRenderPlot, 200);
 
 });
