@@ -1,0 +1,29 @@
+"Dstat 0.7.3 CSV output"
+"Author:","Dag Wieers <dag@wieers.com>",,,,"URL:","http://dag.wieers.com/home-made/dstat/"
+"Host:","M8",,,,"User:","jobedylbas"
+"Cmdline:","dstat -s -json",,,,"Date:","30 Jul 2018 15:54:23 -03"
+"epoch","swap",,"swap",
+"epoch","used","free","used","free"
+1532976863.187,274432,1024180224,274432,1024180224
+1532976864.188,274432,1024180224,274432,1024180224
+1532976865.188,274432,1024180224,274432,1024180224
+1532976866.188,274432,1024180224,274432,1024180224
+
+
+"Host:","M8",,,,"User:","jobedylbas"
+"Cmdline:","dstat -s -json",,,,"Date:","30 Jul 2018 15:54:59 -03"
+"epoch","swap",,"swap",
+"epoch","used","free","used","free"
+1532976899.620,274432,1024180224,274432,1024180224
+
+
+"Host:","M8",,,,"User:","jobedylbas"
+"Cmdline:","dstat -s -json",,,,"Date:","30 Jul 2018 15:57:27 -03"
+"epoch","swap",,"swap",
+"epoch","used","free","used","free"
+
+
+"Host:","M8",,,,"User:","jobedylbas"
+"Cmdline:","dstat -s -json",,,,"Date:","30 Jul 2018 15:58:05 -03"
+"epoch","swap",,"swap",
+"epoch","used","free","used","free"

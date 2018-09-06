@@ -1,0 +1,23 @@
+{
+  "name": "mobi",
+  "version": "1.0.0",
+  "description": "UFRGS IC Project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jobe Diego Dylbas dos Santos",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "consign": "^0.1.6",
+    "ejs": "^2.5.7",
+    "express": "^4.15.5",
+    "express-validator": "^5.2.0",
+    "mongo-trigger": "^0.1.5",
+    "mongodb": "2.2.29",
+    "npm-start-command": "^0.2.0",
+    "serve-favicon": "^2.5.0",
+    "path": "^0.12.7"
+  }
+}

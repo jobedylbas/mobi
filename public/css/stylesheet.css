@@ -1,0 +1,42 @@
+
+@import url(//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css);
+
+/*** custom checkboxes ***/
+
+input[type=checkbox] { display:none; } /* to hide the checkbox itself */
+input[type=checkbox] + label:before {
+  font-family: FontAwesome;
+  display: inline-block;
+}
+
+input[type=checkbox] + label:before { content: "\f096"; color: #868e96} /* unchecked icon */
+input[type=checkbox] + label:before { letter-spacing: 10px;} /* space between checkbox and label */
+
+input[type=checkbox]:checked + label:before { content: "\f14a";  color: #adb5bd;} /* checked icon */
+input[type=checkbox]:checked + label:before { letter-spacing: 9px;} /* allow space for check mark */
+
+#pcList ul {
+	color: #868e96;
+}
+
+canvas{
+	background-color: #fff;
+}
+
+.flex-y {
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.lh-custom {
+	line-height: 2em;
+}
+
+.dropdown-item:hover {
+	background-color: #5a6268;
+	color: #fff;
+}
+
+.dropdown-item:active{
+	background-color: #0069d9;
+}

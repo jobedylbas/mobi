@@ -1,0 +1,21 @@
+<% for(var pc in pcs) { %>
+  <% console.log(pcs[pc].hostname); %>
+  <% var pcAccId = "pc_accordion_"+pcs[pc].hostname; %>
+  <% var pcMetrics = pcs[pc].hostname+"_metrics"; %>
+  <li>
+    <a class="nav-link-collapse collapsed" data-toggle="collapse" href="#<%= pcs[pc].hostname%>">
+      <i class="fa fa-fw fa-desktop"></i>
+      <%= pcs[pc].hostname %>
+    </a>
+    <ul class="sidenav-third-level collapse pl-5" id="<%= pcs[pc].hostname%>">
+      <% for(var data in pcs[pc].datatype) {%>
+        <% var idData = pcs[pc].hostname+':'+pcs[pc].datatype[data]; %>
+        <% var rsc = pcs[pc].datatype[data].split(':')[1]; %>
+        <li>
+            <input id="<%= idData %>" type="checkbox" />
+            <label for="<%= idData %>"><%= rsc %></label>
+        </li>
+      <% } %>
+    </ul>
+  </li>
+<% } %>

@@ -1,0 +1,71 @@
+      <!-- Area Chart Example-->
+      <div class="card mb-3" id="card-id">
+        <div class="card-header">
+          <div class="align-middle float-left lh-custom" id="pcName">
+            <i class="fa fa-area-chart"></i>
+          </div>
+          <div id="controllers" class="row col-lg-5 float-right">
+            <div class="col-sm-2 btn-group btn-group-sm mr-3">
+              <button class="btn btn-secondary">
+                <i class="fa fa-cog"></i>
+              </button>
+              <button class="btn btn-secondary dropdown-toggle" id="download" type="button" data-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false">
+                <i class="fa fa-download"></i>
+              </button>
+              <div class="dropdown-menu" aria-labelledby="download" id="down-type">
+                <button class="dropdown-item" href="#" value="png">Image</button>
+                <button class="dropdown-item" href="#" value="json">JSON file</button>
+                <button class="dropdown-item" href="#" value="csv">CSV file</button>
+              </div>
+            </div>
+            <div class="col-sm-5 btn-group btn-group-sm mr-5">
+              <button class="btn btn-secondary granularity active" value="10">
+                10
+              </button>
+              <button class="btn btn-secondary granularity" value="31">
+                30
+              </button>
+              <button class="btn btn-secondary granularity" value="61">
+                60
+              </button>
+              <button class="btn btn-secondary granularity" value="121">
+                120
+              </button>
+              <button class="btn btn-secondary granularity" value="0">
+                All time
+              </button>
+            </div>
+            <div id="chart-type" class="col-sm-2 btn-group btn-group-sm float-right">
+              <button class="btn btn-secondary" value="area">
+                <i class="fa fa-area-chart" aria-hidden="true"></i>
+              </button>
+              <button class="btn btn-secondary" value="bar">
+                <i class="fa fa-bar-chart-o" aria-hidden="true"></i>
+              </button>
+              <button class="btn btn-secondary active" value="scatter">
+                <i class="fa fa-line-chart" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <canvas id="chart-id" height="180px" class="chartjs-render-monitor"></canvas>
+        </div>
+        <div class="card-footer small text-muted">
+          <div class="row">
+            <div class="col-sm-4">
+              <i class="fa fa-arrow-down" aria-hidden="true"></i>
+              <span id="min-id">Min: </span>
+            </div>
+            <div class="col-sm-4">
+              <i class="fa fa-minus" aria-hidden="true"></i>
+              <span id="av-id">Av: </span>
+            </div>
+            <div class="col-sm-4 ">
+              <i class="fa fa-arrow-up" aria-hidden="true"></i>
+              <span id="max-id">Max: </span>
+            </div>
+          </div>
+        </div>
+      </div>
