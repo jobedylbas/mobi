@@ -1,5 +1,9 @@
 
-const addChartEvents = function() {
+var emptyMain = function(){
+	$('#main').html('');
+}
+
+var addChartEvents = function() {
 
 	$('#charts').on('click', function(){
 		emptyMain();
@@ -10,12 +14,8 @@ const addChartEvents = function() {
 	});
 }
 
-const emptyMain = function(){
-	$('#main').html('');
-}
-
 // Create a socket connection with the URL
-const renderListofPC = function(){
+var renderListofPC = function(){
 	$.ajax({
 		url: '/sidebar',
 		method: 'get',
@@ -36,7 +36,7 @@ const renderListofPC = function(){
     });
 }
 
-const renderChart = function (chartReg){
+var renderChart = function (chartReg){
 	$.ajax({
 		url: '/charts',
 		method: 'get',
@@ -57,17 +57,41 @@ const renderChart = function (chartReg){
 		    	success: function(res){
 		    		let	chart_type = 'line',		    		
 		    			config = setChartConfig(res, granularity, chart_type),
-		    			ctx =  new Chart(chart, config);
-  					console.log(config);
-  					$('#min-id').text('Min: ' + math.min(res.data).toFixed(2));
-					$('#av-id').text('Ave: ' + math.median(res.data).toFixed(2));
-					$('#max-id').text('Max: ' + math.max(res.data).toFixed(2));
+		    			ctx =  new Chart(chart, config),
+		    			data = res;
+  					
+  					const atInfo = function(data){
+  						$('#min-id').text('Min: ' + math.min(data).toFixed(2));
+						$('#av-id').text('Ave: ' + math.median(data).toFixed(2));
+						$('#max-id').text('Max: ' + math.max(data).toFixed(2));
+  					}
+  					atInfo(data.data);
 					
 					// Add events to granularity menu
 					$('.granularity').on('click', function(){
 				  		$(this).siblings().removeClass('active');
 				  		$(this).addClass('active');
-				  		granularity = $(this).val();
+				  		granularity = parseInt($(this).val());
+
+				  		$.ajax({
+					    	url: '/plot',
+					    	method: 'post',
+					    	datatype: "json",
+					    	data: {"id": chartReg, "granularity": granularity},
+					    	success: function(res){
+					    		data = res;
+					    		config.data['labels'] = xAxis(granularity, res[Object.keys(res)[0]]);
+					    		config.data['datasets'] = [chartStyle(res[Object.keys(res)[1]])];
+					    		
+					    		// Preserve the chart characteristcs
+					    		let chartJsType = setChartJsType(chart_type);
+		 						config.data.datasets[0].fill = chartJsType.fill;
+					    		
+					    		ctx.destroy();
+					    		ctx = new Chart(chart, config);
+					    		atInfo(data.data);
+					    	}
+					    });
 				    });
 
 					// Event for change chart type
@@ -90,7 +114,7 @@ const renderChart = function (chartReg){
 
 			    	// Event to download
 			    	$('#down-type').children().on('click', function(){
-			  			let temp = res;
+			  			let temp = data;
 			  			let type = $(this).val();
 			  			if( type === 'json' || type === 'csv'){
 			  				let dataName = chartReg.split(':');
@@ -119,18 +143,18 @@ const renderChart = function (chartReg){
 }
 
 // Define the size of xAxis
-const xAxis = (granularity, time)=>{
-	if(granularity === 0) return time;
+var xAxis = (granularity, time)=>{
+	if(granularity === 0) return time.map(timeConverter);
 	else return Array(granularity).fill().map((x,i)=>i);
 }
 
 
-const toType = function(obj) {
+var toType = function(obj) {
   return ({}).toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
 }
 
 // Set the chart configurations
-const setChartConfig = function(data, granularity, chartType){
+var setChartConfig = function(data, granularity, chartType){
 	let config = {};
 	
 	config['data'] = {};
@@ -173,7 +197,7 @@ const setChartConfig = function(data, granularity, chartType){
 }
 
 // Set the chart type
-const setChartJsType = function(chart_type){
+var setChartJsType = function(chart_type){
 	switch(chart_type){
 		case 'area':
 			return {type: 'line', fill: 'origin'};
@@ -185,7 +209,7 @@ const setChartJsType = function(chart_type){
 }
 
 // Set the chart Style
-const chartStyle = (data)=>{
+var chartStyle = (data)=>{
 	let config = {};
 		
 	config['data'] = data;
@@ -196,7 +220,7 @@ const chartStyle = (data)=>{
 }
 
 // Create a file and download
-const createFile = function (type, data) {
+var createFile = function (type, data) {
 
 	let file = document.createElement('a');
 	if(type==='json'){
@@ -219,13 +243,14 @@ const createFile = function (type, data) {
 		file.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(str));
 		file.setAttribute('download', 'download.csv');
 	}
-
-		
-	file.style.display = 'none';
-	document.body.appendChild(file);
 	file.click();
+}
 
-	document.body.removeChild(file);
+function timeConverter(UNIX_timestamp){
+  let a = new Date(UNIX_timestamp * 1000);
+  let minutes = (a.getMinutes()<10?'0':'') + a.getMinutes();
+  return a.getDate() + '/' + a.getMonth() + '/' + a.getFullYear().toString().substr(-2) + ' ' + 
+  		a.getHours() + ':' + minutes;
 }
 
 var renderPlot = function(id, time, type, divId){
@@ -488,46 +513,46 @@ $(document).ready(function (){
 
 
 
-	// // To choose the file type
-	// $('.multchoice-btn').on('click', function () {
-	// 	if ($(this).hasClass('active')){
-	// 		$(this).removeClass('active');
-	// 	}
-	// 	else{
-	// 		$(this).addClass('active');	
-	// 	}
-	// 	reRenderPlot();
-	// });
+	// To choose the file type
+	$('.multchoice-btn').on('click', function () {
+		if ($(this).hasClass('active')){
+			$(this).removeClass('active');
+		}
+		else{
+			$(this).addClass('active');	
+		}
+		reRenderPlot();
+	});
 
-	// $('#downbtn').on('click', function(){
-	// 	//console.log($('#downloadsheet'));
-	// 	$("#sidebar input:checkbox:checked").each(function(){
-	// 		downList('#downlist', this.id);
-	// 	});
-	// });
+	$('#downbtn').on('click', function(){
+		//console.log($('#downloadsheet'));
+		$("#sidebar input:checkbox:checked").each(function(){
+			downList('#downlist', this.id);
+		});
+	});
 
-	// $('#export').on('click', function(){
-	// 	if($('#jsontype').hasClass('active')){
-	// 		$('#downlist input:checkbox:checked').each(function(){
-	// 			download( this.id, granularity, 'json');
-	// 		});
-	// 	}
-	// 	if($('#csvtype').hasClass('active')){
-	// 		$('#downlist input:checkbox:checked').each(function(){
-	// 			download( this.id, granularity, 'csv');
-	// 		});
-	// 	}
-	// });
+	$('#export').on('click', function(){
+		if($('#jsontype').hasClass('active')){
+			$('#downlist input:checkbox:checked').each(function(){
+				download( this.id, granularity, 'json');
+			});
+		}
+		if($('#csvtype').hasClass('active')){
+			$('#downlist input:checkbox:checked').each(function(){
+				download( this.id, granularity, 'csv');
+			});
+		}
+	});
 
-	// $('#chartTypeDiv').children().on('click', function(){
-	// 	if($('#area').hasClass('active') || $('#line').hasClass('active')){
-	// 		$('#bar').removeClass('active');
-	// 		reRenderPlot();
-	// 	}
-	// });
+	$('#chartTypeDiv').children().on('click', function(){
+		if($('#area').hasClass('active') || $('#line').hasClass('active')){
+			$('#bar').removeClass('active');
+			reRenderPlot();
+		}
+	});
 
 
 
-	// setInterval(reRenderPlot, 200);
+	setInterval(reRenderPlot, 200);
 
 });

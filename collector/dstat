@@ -808,7 +808,7 @@ class dstat_cpu_adv(dstat_cpu):
         for l in self.splitlines():
             if len(l) < 9: continue
             for name in self.vars:
-                if l[0] == 'cpu' + name or ( l[0] == 'cpu' and name == 'total' ):
+                if l[0] == 'cpu' + name or ( l[0] == 'cpuf' and name == 'total' ):
                     self.set2[name] = ( long(l[1]) + long(l[2]), long(l[3]), long(l[4]), long(l[5]), long(l[6]), long(l[7]), long(l[8]) )
 
         for name in self.vars:

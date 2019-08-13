@@ -18,6 +18,7 @@ module.exports.sidebar = function(application, req, res){
     })
   .then(
       function(json){
+        database.close();
         return {"pcs": json};
       },
       function(err){
@@ -28,7 +29,6 @@ module.exports.sidebar = function(application, req, res){
   .then(
     function(resultObject){
       // console.log(resultObject);
-      database.close();
       res.render('pcslist', resultObject);
     }
   )
@@ -44,12 +44,13 @@ module.exports.plot = function(application, req, res){
           machine = data[0];
           datatype = data[1];
           datakey = data[2];
-      return database.getAllData({'datatype': datatype, 'datakey': datakey, 'pccoll': machine});
+      console.log(req.body.granularity);
+      return database.getData({'datatype': datatype, 'datakey': datakey, 'pccoll': machine, 'granularity': req.body.granularity});
     }
   )
   .then(
       function(json){
-        console.log(json);
+        // console.log(json);
         database.close();
         res.send(json);
       },
