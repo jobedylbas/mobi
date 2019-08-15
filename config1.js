@@ -6,7 +6,7 @@ const config = {
 		appRoot: path.resolve(__dirname),
 		defaultDatabase: 'test',
 		defaultUri: 'mongodb://mongodb:27017',
-		defaultPCCol: 'pcs' 
+		defaultPCCol: 'pcs'
 	}
 };
 

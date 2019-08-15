@@ -1,4 +1,6 @@
-version: '2.2'
+version: '3'
+volumes:
+  node_modules:
 services:
     app:
         container_name: mobi_container
@@ -6,7 +8,8 @@ services:
         build: ./
         command: node app.js
         volumes:
-          - .:/usr/src/app/
+          - ./:/usr/src/app/
+          - node_modules:/usr/src/app/node_modules
         ports:
           - 3000:3000
         links:
