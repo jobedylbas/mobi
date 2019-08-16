@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-
 # Adding useful libraries
 try:
 	import sys, os, time, sched, re, getopt, fnmatch, pip
@@ -46,7 +45,7 @@ class dstat_cpu():
 		self.open('/proc/stat')
 		self.cols = 5
 
-	def discover(self, *objects):        
+	def discover(self, *objects):
 		ret = []
 		for l in self.splitlines():
 			if len(l) < 9 or l[0][0:3] != 'cpu': continue

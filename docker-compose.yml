@@ -17,7 +17,7 @@ services:
           # - elastic
     mongodb:
       container_name: mongo_container
-      image: mongo:latest
+      image: mongo:4.0.12-xenial
       volumes:
         - ./data:/data/db
       ports:
