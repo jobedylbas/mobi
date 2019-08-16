@@ -45,7 +45,7 @@
             </ul>
           </div>
         </div>
-      </div>  
+      </div>
     </li>
     <li class="nav-item">
       <div id="accordion" role="tablist">
@@ -84,24 +84,22 @@
                             <span class="custom-control-indicator"></span>
                             <span class="custom-control-description">Memory</span>
                           </label>
-                          </li>
-                          <li class="list-group-item float-right">
-                            <label class="custom-control custom-checkbox" >
-                              <input type="checkbox" class="custom-control-input" id="<%=pcs[pc].vms[vm]%>_cpuusage">
-                              <span class="custom-control-indicator"></span>
-                              <span class="custom-control-description">CPU usage</span>
-                            </label>
-                          </li>
-                        </ul>
-                      </div>
-                      <% } %>
-                    </ul>
-                  </div>
-
-                  <% } %>
-                </li>
-              </ul>
-            </div>
+                        </li>
+                        <li class="list-group-item float-right">
+                          <label class="custom-control custom-checkbox" >
+                            <input type="checkbox" class="custom-control-input" id="<%=pcs[pc].vms[vm]%>_cpuusage">
+                            <span class="custom-control-indicator"></span>
+                            <span class="custom-control-description">CPU usage</span>
+                          </label>
+                        </li>
+                      </ul>
+                    </div>
+                    <% } %>
+                  </ul>
+                </div>
+                <% } %>
+              </li>
+            </ul>
           </div>
         </div>
       </li>
@@ -119,7 +117,7 @@
                   <div class="modal-content">
                     <div class="modal-header">
                       <h5 class="modal-title" id="advoptmodaltitle">Advanced options</h5>
-                      
+
                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                       </button>
@@ -148,10 +146,10 @@
                               <option value="area">Area</option>
                               <option value="bar">Bars</option>
                               <option value="lines">Lines</option>
-                              <option value="scatter">Scatter</option> 
+                              <option value="scatter">Scatter</option>
                             </select>
                           </div>
-                          
+
                         </form>
                       </div>
                     </div>

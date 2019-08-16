@@ -3,18 +3,17 @@ var DB = require('../db/dbConnection');
 
 // Function to render the index with the connection and data
 module.exports.index = function (application, req, res){
-  res.render("index1");
+  res.render("index");
 }
 
 // Function to render the sidebar with the metrics
 module.exports.sidebar = function(application, req, res){
-
   // Conecta com o banco
   var database = new DB;
   database.connect(config.app.defaultUri, config.app.defaultDatabase)
   .then(
     function(){
-      return database.getPClist(config.app.defaultPCCol);    
+      return database.getPClist(config.app.defaultPCCol);
     })
   .then(
       function(json){
