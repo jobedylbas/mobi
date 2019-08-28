@@ -12,5 +12,8 @@ MOBI is a monitor of computational resources focused on environments of Big Data
 
 It is very easy to install the server, simple use:
 
-```docker-compose up --build
-```
+```docker-compose up --build```
+
+### Observations
+
+You may need install some python packages.
