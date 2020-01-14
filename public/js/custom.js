@@ -1,4 +1,24 @@
+var yAxisTitle = function(metric) {
+	switch (metric) {
+		case 'total-cpu-usage-usr':	return "CPU Total Usage (%)"; break;
+		case 'total-cpu-usage-sys': return "CPU Total System Usage (%)"; break;
+		case 'total-cpu-usage-idl':	return "CPU Total Idle (%)"; break;
+		case 'total-cpu-usage-wai': return "CPU Total Wait (%)"; break;
+		case 'total-cpu-usage-stl': return "CPU Total Steal (%)"; break;
+		case 'disk-total-read':  	return "Disk Total Read (Mb)"; break;
+		case 'disk-total-writ':	return "Disk Total Write (Mb)"; break;
+		case 'net-total-recv':  return "Network Total Received (Mb)"; break;
+		case 'net-total-send':  return "Network Total Send (Mb)"; break;
+		case 'paging-in':		return "Memory Pages In"; break;
+		case 'paging-out':		return "Memory Pages Out"; break;
+		case 'system-int':			return "System Interruptions"; break;
+		case 'system-csw':			return "Context Switches"; break;
 
+		default:
+			return "Unknow metric"
+			break;
+	}
+}
 var emptyMain = function(){
 	$('#main').html('');
 }
@@ -51,12 +71,13 @@ var renderChart = function (chartReg){
 			// Ajax call to get data to plot
 		    $.ajax({
 		    	url: '/plot',
-		    	method: 'post',
+		    	method: 'get',
 		    	datatype: "json",
 		    	data: {"id": chartReg, "granularity": granularity},
 		    	success: function(res){
-		    		let	chart_type = 'line',		    		
-		    			config = setChartConfig(res, granularity, chart_type),
+					let	chart_type = 'line',	
+						yTitle = chartReg.split(':')[2]	    		
+		    			config = setChartConfig(yTitle, res, granularity, chart_type),
 		    			ctx =  new Chart(chart, config),
 		    			data = res;
   					
@@ -154,17 +175,17 @@ var toType = function(obj) {
 }
 
 // Set the chart configurations
-var setChartConfig = function(data, granularity, chartType){
+var setChartConfig = function(yTitle, data, granularity, chartType){
 	let config = {};
 	
 	config['data'] = {};
 	config.data['labels'] = xAxis(granularity, data[Object.keys(data)[0]]);
-	
+	console.log(data)
 	config.data['datasets'] = {};
 	config.data['datasets'] = [chartStyle(data[Object.keys(data)[1]])];
 	
 	let chartJsType = setChartJsType(chartType);
-
+	
 	config.data.datasets[0]['fill'] = chartJsType.fill;
 	config['type'] = chartJsType.type;
 	config['options'] = {};
@@ -183,7 +204,7 @@ var setChartConfig = function(data, granularity, chartType){
 						    		}];
 	config.options.scales['yAxes'] = [{scaleLabel: {
 						    				display: true,
-						    				labelString: 'CPU Total usage (%)',
+						    				labelString: yAxisTitle(yTitle),
 						    			},
 					    				ticks:{
 					    					beginAtZero: true,
@@ -307,7 +328,7 @@ var renderSidebar = function(){
         		//console.log(chartTypeList);
 
 				// Render the plot
-				//console.log(this.id);
+				console.log(this.id);
 				renderPlot(this.id, granularity, chartTypeList, divId);	
 
 			}

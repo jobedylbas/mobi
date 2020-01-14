@@ -27,7 +27,7 @@ module.exports.sidebar = function(application, req, res){
   )
   .then(
     function(resultObject){
-      // console.log(resultObject);
+      console.log(resultObject.pcs[0].datatype);
       res.render('pcslist', resultObject);
     }
   )
@@ -39,7 +39,7 @@ module.exports.plot = function(application, req, res){
   database.connect(config.app.defaultUri, config.app.defaultDatabase)
   .then(
     function(){
-      let data = req.body.id.split(':');
+      let data = req.query.id.split(':');
           machine = data[0];
           datatype = data[1];
           datakey = data[2];

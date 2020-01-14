@@ -15,7 +15,7 @@ module.exports = function (application, req, res){
     application.controllers.home.sidebar(application, req, res);
   });
 
-  application.post('/plot', function(req, res){
+  application.get('/plot', function(req, res){
     application.controllers.home.plot(application, req, res);
   });
 
