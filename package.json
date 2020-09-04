@@ -15,7 +15,7 @@
     "express": "^4.15.5",
     "express-validator": "^4.2.1",
     "mongo-trigger": "^0.1.5",
-    "mongodb": "^2.2.33",
+    "mongodb": "^3.6.1",
     "npm-start-command": "^0.2.0",
     "socket.io": "^2.0.4",
     "socket.io-stream": "^0.9.1",
